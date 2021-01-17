@@ -102,6 +102,33 @@ class BackUpActivity : AppCompatActivity() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    suspend fun packZipFileForBackup(context: Context): File? {
+        return withContext(Dispatchers.IO) {
+            val dbFile = context.getDatabasePath("dbName.db") // replace this with your db name
+            val dbParentDirectory = dbFile.parentFile
+            val zipFilePath = context.filesDir.path + "/backup.zip" // create zip file for backup
+            val zipFile = File(zipFilePath)
+
+            val dataDir = context.filesDir.parentFile
+            if (dataDir != null) {
+                val sharedPrefDirectoryPath = dataDir.absolutePath + "/shared_prefs"
+                val encZipFile = ZipFile(zipFile.absolutePath, "password".toCharArray())
+                val zipParameters = ZipParameters()
+                zipParameters.isEncryptFiles = true
+                zipParameters.encryptionMethod = EncryptionMethod.AES
+                encZipFile.addFolder(File(sharedPrefDirectoryPath), zipParameters) // add shared pref directory
+                encZipFile.addFolder(context.filesDir, zipParameters) // add files directory
+                encZipFile.addFolder(dbParentDirectory, zipParameters) // add database directory
+            }
+            return@withContext zipFile
+        }
+    }
+
+}
 ```
 
 # Restore
