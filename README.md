@@ -382,6 +382,7 @@ class RestoreActivity : AppCompatActivity() {
                     it.deleteRecursively()
                 }
 
+
                 // copy all the files that were extracted from zip and place them under `data` directory
                 if (extractedFilesDir!!.exists()) {
                     val toBeRestoredFolders = extractedFilesDir.listFiles()
@@ -418,5 +419,4 @@ class RestoreActivity : AppCompatActivity() {
     }
 
 }
-```
 ```
